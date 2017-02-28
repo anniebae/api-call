@@ -114,20 +114,19 @@ var App = function (_Component) {
   _createClass(App, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      var _this2 = this;
-
       // Called the first time the component is loaded right before the component is added to the page
-      var url = "http://www.omdbapi.com/?s=happy&y=&r=json&plot=short";
-      _superagent2.default.get(url).then(function (response) {
-        _this2.setState({
-          movies: response.body.Search,
-          total: response.body.totalResults
-        });
-      });
+      this.search();
+    }
+  }, {
+    key: 'updateSearch',
+    value: function updateSearch() {
+      this.search(this.refs.query.value);
     }
   }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
+
       var movies = _lodash2.default.map(this.state.movies, function (movies) {
         return _react2.default.createElement(
           'li',
@@ -138,13 +137,30 @@ var App = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement('input', { ref: 'textBox', type: 'text' }),
+        _react2.default.createElement('input', { ref: 'query', onChange: function onChange(e) {
+            _this2.updateSearch();
+          }, type: 'text' }),
         _react2.default.createElement(
           'ul',
           null,
           movies
         )
       );
+    }
+  }, {
+    key: 'search',
+    value: function search() {
+      var _this3 = this;
+
+      var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "star";
+
+      var url = 'http://www.omdbapi.com/?s=' + query + '&y=&r=json&plot=short';
+      _superagent2.default.get(url).then(function (response) {
+        _this3.setState({
+          movies: response.body.Search,
+          total: response.body.totalResults
+        });
+      });
     }
   }]);
 

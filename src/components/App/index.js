@@ -11,13 +11,11 @@ class App extends Component {
 
   componentWillMount() {
     // Called the first time the component is loaded right before the component is added to the page
-    var url = "http://www.omdbapi.com/?s=happy&y=&r=json&plot=short";
-    Request.get(url).then((response) => {
-      this.setState({
-        movies: response.body.Search,
-        total: response.body.totalResults
-      });
-    });
+    this.search();
+  }
+
+  updateSearch() {
+    this.search(this.refs.query.value);
   }
 
   render() {
@@ -26,10 +24,20 @@ class App extends Component {
     })
     return (
       <div>
-        <input ref="textBox" type="text" />
+        <input ref="query" onChange={ (e) => {this.updateSearch(); } } type="text" />
         <ul>{movies}</ul>
       </div>
     )
+  }
+
+  search(query = "star"){
+    var url = `http://www.omdbapi.com/?s=${query}&y=&r=json&plot=short`;
+    Request.get(url).then((response) => {
+      this.setState({
+        movies: response.body.Search,
+        total: response.body.totalResults
+      });
+    });
   }
 }
 
